@@ -69,3 +69,10 @@ Since the momentum term $\alpha v$ and the $v$ update learning rate $\gamma$ in 
 **In our MNIST experiments, we used CLIP_NORM = 1.0**
 
 **在 MNIST 实验中，我们使用了 CLIP_NORM = 1.0**
+
+## 🏞 Pictures | 图像
+
+![mnist_seed42](./images/ftlo_mnist_rs42.png)
+![mnist_seed3407](./images/ftlo_mnist_rs3407.png)
+
+![rosenbrockfunc](./images/rb.png)

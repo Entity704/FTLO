@@ -46,9 +46,8 @@ We identified a parameter combination that outperforms Adam through comparative 
 
 我们在 MNIST 任务上，通过固定随机种子对比实验，找到了超越 Adam 的参数组合
 
-| Parameter | Symbol | Description | Value |
+| Parameter/参数 | Symbol/符号 | Description/描述 | Value/数值 |
 | :--- | :--- | :--- | :--- |
-| 参数 | 符号 | 描述 | 数值 |
 | Initial Learning Rate | $\eta$ | - | $1 \times 10^{-3}$ |
 | 初始学习率 | $\eta$ | - | $1 \times 10^{-3}$ |
 | Momentum Coefficient 1 | $\beta_1$ | Baseline affecting $\alpha$ | $0.8$ |
@@ -59,6 +58,23 @@ We identified a parameter combination that outperforms Adam through comparative 
 | 动量衰减指数 | $P$ | 衰减速度（ $\alpha$ ） | $0.4$ |
 | $v$ Decay Exponent | $Q$ | Decay speed for $\gamma$ | $0.2$ |
 | $v$ 衰减指数 | $Q$ | 衰减速度（ $\gamma$ ） | $0.2$ |
+
+## 📝 Tuning Strategy and Robustness Observations | 调优策略与鲁棒性观察
+
+The FTLO performs well in tasks **far from the optimal solution** or those that are **high-dimensional and complex** (such as MNIST). However, when the initial point is **very close to the optimum** (for example, starting at $(0, 0)$ for the Rosenbrock function), its momentum term may cause severe oscillations.
+
+FTLO在**远离最优解**或**高维、复杂**任务（如 MNIST）中表现出色。然而，当初始点**非常接近最优解**（例如 Rosenbrock 函数的 $(0, 0)$ 起点）时，其动量项可能导致剧烈振荡。
+
+**Adjusting the decay parameters according to the initial conditions is key to using FTLO:**
+
+**根据初始条件调整衰减参数，是使用 FTLO 的关键：**
+
+| Scenario/场景 | Initial Conditions/初始条件 | Tuning Suggestion/调参建议 | Purpose/目的 |
+| :--- | :--- | :--- | :--- |
+| **High-Dim / Exploration** | Starting point far from target | Keep $P$, $Q$ small; $B_1$, $B_2$ moderate | Traverse flat regions quickly |
+| **高维/探索** | 初始点远离目标 | 保持 $P, Q$ 较小; $B_1, B_2$ 适中 | 快速穿梭平坦区域 |
+| **Fine-Tuning / Stabilization** | Starting point close to target | **Lower $B_1$, $B_2$**; **Increase $P$, $Q$** | Weaken momentum influence, accelerate into stable convergence |
+| **微调/稳定** | 初始点接近目标 | **调低 $B_1, B_2$**; **调高 $P, Q$** | 削弱动量影响，加速进入稳定收敛 |
 
 ## ⚠️ Robustness Recommendation: Gradient Clipping | 鲁棒性建议：梯度裁剪
 
@@ -76,3 +92,4 @@ Since the momentum term $\alpha v$ and the $v$ update learning rate $\gamma$ in 
 ![mnist_seed3407](./images/ftlo_mnist_rs3407.png)
 
 ![rosenbrockfunc](./images/rb.png)
+![rosenbrockfunc2](./images/rb2.png)
